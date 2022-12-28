@@ -13,9 +13,16 @@ fn main() {
     for stream in listener.incoming() {
         match stream {
             Ok(mut _stream) => {
-                let mut buffer = [0; 8];
-                _stream.read(&mut buffer).unwrap(); 
-                _stream.write("+PONG\r\n".as_bytes()).unwrap();
+                loop {
+                    let mut buffer = [0; 512];
+                    _stream.read(&mut buffer).unwrap();
+
+                    // let result = String::from_utf8_lossy(&buffer[..]);
+                    // println!("{}", result);
+                    
+                    _stream.write("+PONG\r\n".as_bytes()).unwrap();
+                    _stream.flush().unwrap();
+                }
             }
             Err(e) => {
                 println!("error: {}", e);
